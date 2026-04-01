@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "5ik7BFDEVNMYkykWh1FEG"
+uri = "file://artifacts/landing/public/work-1.png"
+type = "image"
+title = "Dark cinematic abstract 3D render"
+
+[[generated]]
+id = "GHw3EFTvWPFWdR8VWUyyI"
+uri = "file://artifacts/landing/public/work-2.png"
+type = "image"
+title = "Futuristic digital product interface"
+
+[[generated]]
+id = "WtqJUbudZ5JyxPYhJSDA2"
+uri = "file://artifacts/landing/public/work-3.png"
+type = "image"
+title = "Moody fashion photography profile"
+
+[[generated]]
+id = "IofcKszuIA0DZspVWBpGB"
+uri = "file://artifacts/landing/public/work-4.png"
+type = "image"
+title = "Abstract fluid motion graphic still"
