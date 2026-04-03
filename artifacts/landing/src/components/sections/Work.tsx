@@ -36,6 +36,18 @@ export default function Work() {
   });
 
   const [maxTranslate, setMaxTranslate] = useState(0);
+  const [isReleased, setIsReleased] = useState(false);
+
+  // Exit gate for manual navigation (Navbar clicks)
+  useEffect(() => {
+    const handleRelease = () => {
+      setIsReleased(true);
+      // Give it enough time to finish the programmatic scroll
+      setTimeout(() => setIsReleased(false), 1500);
+    };
+    window.addEventListener("app:release-scroll", handleRelease);
+    return () => window.removeEventListener("app:release-scroll", handleRelease);
+  }, []);
 
   // Dynamic max translation calculation:
   // trackWidth - viewportWidth
@@ -82,7 +94,7 @@ export default function Work() {
 
       // LOCK LOGIC:
       // 1. If scrolling DOWN and we have cards to show
-      if (delta > 0 && currentX < maxTranslate && isAtTop) {
+      if (!isReleased && delta > 0 && currentX < maxTranslate && isAtTop) {
         e.preventDefault();
         // Force the section to the top to avoid "drifting"
         if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
@@ -91,7 +103,7 @@ export default function Work() {
         xTarget.set(-nextX);
       }
       // 2. If scrolling UP and we are not at the first card
-      else if (delta < 0 && currentX > 0 && isAtTop) {
+      else if (!isReleased && delta < 0 && currentX > 0 && isAtTop) {
         e.preventDefault();
         if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
 
@@ -107,31 +119,29 @@ export default function Work() {
 
     const handleTouchMove = (e: TouchEvent) => {
       const rect = el.getBoundingClientRect();
-      const isActive = rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+      const isAtTop = Math.abs(rect.top) < 50;
       
-      if (!isActive) return;
+      if (!isAtTop) return;
 
       const currentY = e.touches[0].clientY;
       const deltaY   = touchStartY - currentY;
-      
       const currentX = -xTarget.get();
-
-      // Mobile delta multiplier (swipes feel faster/different than wheels)
       const multiplier = 1.5;
       const touchDelta = deltaY * multiplier;
 
-      if (touchDelta > 0 && currentX < maxTranslate) {
-        // Only prevent if we actually move horizontally
+      if (!isReleased && touchDelta > 0 && currentX < maxTranslate) {
         e.preventDefault();
+        if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
         const nextX = Math.min(currentX + touchDelta, maxTranslate);
         xTarget.set(-nextX);
-      } else if (touchDelta < 0 && currentX > 0) {
+      } else if (!isReleased && touchDelta < 0 && currentX > 0) {
         e.preventDefault();
+        if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
         const nextX = Math.max(currentX + touchDelta, 0);
         xTarget.set(-nextX);
       }
       
-      touchStartY = currentY; // Update for continuous movement
+      touchStartY = currentY;
     };
 
     // Passive: false is CRITICAL to allow preventDefault()

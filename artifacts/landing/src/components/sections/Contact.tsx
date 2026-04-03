@@ -58,7 +58,8 @@ export default function Contact() {
                 <div>
                   <p className="text-xs text-muted-foreground mb-1 uppercase tracking-[0.2em] font-bold">Visit Us</p>
                   <p className="text-xl font-medium group-hover:text-primary transition-colors duration-300">
-                    123 Innovation Drive, NY 10001
+                    201, Lexicon Lore LLC, DSC Tower, Dubai Studio City<br/>
+                    Dubai, United Arab Emirates
                   </p>
                 </div>
               </motion.div>

@@ -14,6 +14,19 @@ import CustomCursor from "@/components/sections/CustomCursor";
 export default function Landing() {
   useEffect(() => {
     document.documentElement.classList.add('dark');
+
+    // Handle hash scrolling on mount (e.g. when coming from another page)
+    if (window.location.hash) {
+      const id = window.location.hash.replace("#", "");
+      // Small delay to ensure all components (like SplineHero) are rendered and heights are stable
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          window.dispatchEvent(new CustomEvent("app:release-scroll"));
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 800);
+    }
   }, []);
 
   return (

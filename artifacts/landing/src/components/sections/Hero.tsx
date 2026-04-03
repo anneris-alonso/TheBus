@@ -89,7 +89,6 @@ export default function Hero() {
         transition={{ delay: 1.8, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
       >
-        <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground font-medium">Scroll to explore</span>
         <div className="w-[1px] h-16 bg-white/10 relative overflow-hidden">
           <motion.div 
             animate={{ y: [-64, 64] }}

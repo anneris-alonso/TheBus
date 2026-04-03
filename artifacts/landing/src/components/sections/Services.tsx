@@ -93,8 +93,10 @@ export default function Services() {
             >
               <div className="py-8 md:py-12 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-none relative z-10">
                 <div className="flex items-center gap-8 md:gap-16">
-                  <span className="text-xl md:text-2xl text-muted-foreground font-light tabular-nums">{service.id}</span>
-                  <h3 className="text-4xl md:text-6xl font-serif font-bold group-hover:translate-x-4 group-hover:text-primary transition-all duration-500">
+                  <span className="text-xl md:text-2xl text-muted-foreground font-light tabular-nums group-hover:text-primary transition-colors duration-500">
+                    {service.id}
+                  </span>
+                  <h3 className="text-4xl md:text-6xl font-serif font-bold group-hover:text-primary transition-all duration-500">
                     {service.title}
                   </h3>
                 </div>
@@ -119,8 +121,7 @@ export default function Services() {
                 </p>
               </div>
 
-              {/* Hover Background Fill — ahora con color primary tenue */}
-              <div className="absolute inset-0 bg-primary/5 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out z-0" />
+
             </motion.div>
           ))}
         </motion.div>

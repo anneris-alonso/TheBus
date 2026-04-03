@@ -133,6 +133,7 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    overflow-x: hidden;
   }
   
   html {
@@ -142,5 +143,9 @@
   
   a, button, input, select, textarea {
     cursor: none; /* Keep cursor hidden for interactive elements too */
+  }
+
+  section {
+    scroll-margin-top: 5rem;
   }
 }

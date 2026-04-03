@@ -22,6 +22,23 @@ export default function Navbar() {
     }
   });
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Notify sections to drop their scroll locks (e.g. Work section)
+    window.dispatchEvent(new CustomEvent("app:release-scroll"));
+
+    // If we're already on the home page and clicking a hash link, handle smooth scroll manually
+    if (href.startsWith("/#") && window.location.pathname === "/") {
+      const id = href.replace("/#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        e.preventDefault();
+        element.scrollIntoView({ behavior: "smooth" });
+        // Update URL hash without causing a page jump via the router
+        window.history.pushState(null, "", href);
+      }
+    }
+  };
+
   return (
     <motion.header
       variants={{
@@ -49,16 +66,16 @@ export default function Navbar() {
         
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { name: "Work", href: "/#work" },
+            { name: "About", href: "/#about" },
             { name: "Expertise", href: "/#expertise" },
             { name: "The Bus Story", href: "/the-bus-story" },
-            { name: "Agency", href: "/#agency" },
             { name: "Contact", href: "/#contact" }
           ].map((item) => (
             <Link 
               key={item.name} 
               href={item.href} 
-              className="text-base md:text-lg font-medium tracking-wide uppercase text-white/90 hover:text-white drop-shadow-md transition-colors hover-trigger"
+              onClick={(e) => handleNavClick(e, item.href)}
+              className="text-base md:text-lg font-medium tracking-wide uppercase text-white/90 hover:text-primary drop-shadow-md transition-colors hover-trigger"
             >
               {item.name}
             </Link>

@@ -66,17 +66,18 @@ export default function About() {
   ];
 
   return (
-    <section ref={sectionRef} className="pt-12 pb-32 px-6 md:px-12 container mx-auto relative overflow-hidden" id="agency">
+    <section ref={sectionRef} className="pt-12 pb-32 px-6 md:px-12 container mx-auto relative overflow-hidden" id="about">
       {/* Linea decorativa paralaxada de fondo */}
       <motion.div
         style={{ y: bgY }}
         className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-transparent via-primary/30 to-transparent pointer-events-none"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 lg:gap-32 items-center">
         
         {/* LEFT — Entra desde la izquierda */}
         <motion.div
+          className="lg:col-span-3"
           initial={{ opacity: 0, x: -80 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -87,33 +88,40 @@ export default function About() {
           <h2 className="text-5xl md:text-7xl font-serif font-bold leading-tight mb-10 overflow-hidden">
             {headlineLines.map((line, i) => (
               <div key={i} className="overflow-hidden">
-                <motion.span
-                  className="block"
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={lineVariants}
-                >
-                  {i === 2 ? (
-                    <span className="text-primary italic">{line}</span>
-                  ) : line}
-                </motion.span>
+                 <motion.span
+                   className="block"
+                   custom={i}
+                   initial="hidden"
+                   whileInView="visible"
+                   viewport={{ once: true }}
+                   variants={lineVariants}
+                 >
+                   {i === 1 ? (
+                     <span className="text-transparent" style={{ WebkitTextStroke: "1px white" }}>
+                       {line}
+                     </span>
+                   ) : i === 2 ? (
+                     <span className="text-primary italic">{line}</span>
+                   ) : line}
+                 </motion.span>
               </div>
             ))}
           </h2>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.4 }}
-            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mb-12"
+            className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-12 space-y-6"
           >
-            LexiconLore is a full-service virtual agency on wheels. We travel 
-            to any location, providing state-of-the-art on-ground solutions and 
-            capturing stories behind the skyline.
-          </motion.p>
+            <p>
+              Lexicon Lore is made up of people from all over the world. We are designers, architects, writers, editors, engineers, musicians, and creatives forming a unique family that works together to create epic projects beyond the imagination. Now, we are taking our human-centered approach <span className="text-white italic">on the road.</span>
+            </p>
+            <p>
+              <span className="text-primary font-bold">The Bus</span> is our state-of-the-art mobile production office—a safe, creative cocoon that brings our full-service studio anywhere in the Middle East. Fast, reliable, and right at your doorstep, it’s designed to support founders and elevate the stories of today, wherever they unfold.
+            </p>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -132,11 +140,11 @@ export default function About() {
 
         {/* RIGHT — Entra desde la derecha */}
         <motion.div
+          className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-16 lg:gap-x-40 gap-y-24 lg:gap-y-64 self-center pt-8"
           initial={{ opacity: 0, x: 80 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, ease: "easeOut" }}
-          className="grid grid-cols-2 gap-x-10 gap-y-14 content-center"
         >
           <Counter from={0} to={120} suffix="+" label="Projects Delivered" />
           <Counter from={0} to={15} suffix="+" label="Industry Awards" />
