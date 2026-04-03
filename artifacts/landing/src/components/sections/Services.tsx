@@ -69,8 +69,8 @@ export default function Services() {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="text-3xl md:text-5xl font-serif font-bold max-w-3xl leading-tight"
             >
-              We don't just build websites. 
-              <span className="italic text-primary">We architect digital flagship experiences.</span>
+              <span className="italic text-primary">Epic projects. </span>
+              A full-service agency right at your doorstep.
             </motion.p>
           </div>
         </div>

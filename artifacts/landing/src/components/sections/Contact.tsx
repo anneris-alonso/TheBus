@@ -42,8 +42,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1 uppercase tracking-[0.2em] font-bold">Email Us</p>
-                  <a href="mailto:hello@thebus.agency" className="text-xl font-medium group-hover:text-primary transition-colors duration-300">
-                    hello@thebus.agency
+                  <a href="mailto:projects@lexiconlore.com" className="text-xl font-medium group-hover:text-primary transition-colors duration-300">
+                    projects@lexiconlore.com
                   </a>
                 </div>
               </motion.div>

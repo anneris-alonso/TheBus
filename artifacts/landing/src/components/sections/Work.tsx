@@ -170,18 +170,18 @@ export default function Work() {
           <h2 className="text-3xl md:text-6xl font-serif font-bold uppercase tracking-tighter text-white">
             THE BUS
             <br />
-            <span className="text-primary text-lg md:text-2xl tracking-widest font-sans">
+            {/*<span className="text-primary text-lg md:text-2xl tracking-widest font-sans">
               Inside &amp; Out
-            </span>
+            </span>*/}
           </h2>
         </div>
 
         {/* Progress Hint */}
         <motion.div
-           className="absolute bottom-10 right-8 md:right-16 z-10 pointer-events-none"
-           style={{
-             opacity: useTransform(xTarget, [0, -maxTranslate / 4, -maxTranslate], [0, 1, 0.4]),
-           }}
+          className="absolute bottom-10 right-8 md:right-16 z-10 pointer-events-none"
+          style={{
+            opacity: useTransform(xTarget, [0, -maxTranslate / 4, -maxTranslate], [0, 1, 0.4]),
+          }}
         >
           <span className="text-white/40 font-mono text-xs tracking-widest uppercase">
             SCROLL TO EXPLORE

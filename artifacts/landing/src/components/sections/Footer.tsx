@@ -48,7 +48,7 @@ export default function Footer() {
 
         {/* Botón brutalista — cuadrado, sin redondear */}
         <motion.a
-          href="mailto:hello@thebus.com"
+          href="mailto:projects@lexiconlore.com"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -83,7 +83,7 @@ export default function Footer() {
           <div>
             <h4 className="font-medium tracking-widest uppercase mb-6 text-xs text-muted-foreground">Contact</h4>
             <ul className="flex flex-col gap-3">
-              <li><a href="mailto:projects@lexiconlore.com" className="hover:text-primary transition-colors hover-trigger">hello@thebus.com</a></li>
+              <li><a href="mailto:projects@lexiconlore.com" className="hover:text-primary transition-colors hover-trigger">projects@lexiconlore.com</a></li>
               <li><a href="tel:+1234567890" className="hover:text-primary transition-colors hover-trigger">+1 (234) 567-890</a></li>
               <li className="mt-4 text-muted-foreground">
                 Lexicon Lore LLC<br/>
