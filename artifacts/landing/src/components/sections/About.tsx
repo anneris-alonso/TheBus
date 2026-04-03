@@ -1,5 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { Link } from "wouter";
 
 // Animación de contador con entrada suave
 function Counter({ from, to, label, suffix = "" }: { from: number, to: number, label: string, suffix?: string }) {
@@ -59,8 +60,9 @@ export default function About() {
   const bgY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   const headlineLines = [
-    "We Are A Creative",
-    "Force Of Nature.",
+    "People.",
+    "Spaces.",
+    "Experiences.",
   ];
 
   return (
@@ -93,7 +95,7 @@ export default function About() {
                   viewport={{ once: true }}
                   variants={lineVariants}
                 >
-                  {i === 1 ? (
+                  {i === 2 ? (
                     <span className="text-primary italic">{line}</span>
                   ) : line}
                 </motion.span>
@@ -108,9 +110,9 @@ export default function About() {
             transition={{ duration: 0.9, delay: 0.4 }}
             className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mb-12"
           >
-            Born from a desire to challenge the ordinary, we exist to build brands 
-            that leave a mark. Strategy meets obsessive craftsmanship to deliver 
-            experiences that transform businesses.
+            LexiconLore is a full-service virtual agency on wheels. We travel 
+            to any location, providing state-of-the-art on-ground solutions and 
+            capturing stories behind the skyline.
           </motion.p>
 
           <motion.div
@@ -119,12 +121,12 @@ export default function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.9, delay: 0.6 }}
           >
-            <a
-              href="#contact"
+            <Link
+              href="/the-bus-story"
               className="inline-block border-2 border-white text-white font-bold uppercase tracking-widest text-sm px-10 py-5 hover:bg-primary hover:border-primary hover:text-background transition-all duration-400 cursor-none"
             >
-              Discover Our Story
-            </a>
+              The Bus Story
+            </Link>
           </motion.div>
         </motion.div>
 

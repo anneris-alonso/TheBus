@@ -17,7 +17,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground min-h-screen selection:bg-primary selection:text-primary-foreground font-sans overflow-x-hidden">
+    <div className="bg-background text-foreground min-h-screen selection:bg-primary selection:text-primary-foreground font-sans">
       <CustomCursor />
       <Navbar />
       <main>

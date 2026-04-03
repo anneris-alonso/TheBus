@@ -97,7 +97,7 @@ export default function Contact() {
                     <div className="relative">
                       <Input 
                         type="email"
-                        placeholder="HELLO@EXAMPLE.COM" 
+                        placeholder="hello@example.com" 
                         className="bg-transparent border-0 border-b-2 border-white/20 focus-visible:border-primary focus-visible:ring-0 px-0 h-14 rounded-none font-serif text-xl placeholder:text-white/20 transition-all duration-300"
                       />
                     </div>

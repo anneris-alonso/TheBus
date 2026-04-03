@@ -72,7 +72,7 @@ export default function Footer() {
           <div>
             <h4 className="font-medium tracking-widest uppercase mb-6 text-xs text-muted-foreground">Socials</h4>
             <ul className="flex flex-col gap-3">
-              {['Instagram', 'Twitter / X', 'LinkedIn', 'Awwwards'].map(link => (
+              {['Instagram', 'Twitter / X', 'LinkedIn'].map(link => (
                 <li key={link}>
                   <a href="#" className="hover:text-primary transition-colors hover-trigger">{link}</a>
                 </li>
@@ -83,11 +83,12 @@ export default function Footer() {
           <div>
             <h4 className="font-medium tracking-widest uppercase mb-6 text-xs text-muted-foreground">Contact</h4>
             <ul className="flex flex-col gap-3">
-              <li><a href="mailto:hello@thebus.com" className="hover:text-primary transition-colors hover-trigger">hello@thebus.com</a></li>
+              <li><a href="mailto:projects@lexiconlore.com" className="hover:text-primary transition-colors hover-trigger">hello@thebus.com</a></li>
               <li><a href="tel:+1234567890" className="hover:text-primary transition-colors hover-trigger">+1 (234) 567-890</a></li>
               <li className="mt-4 text-muted-foreground">
-                123 Creative Studio<br/>
-                Design District, NY 10012
+                Lexicon Lore LLC<br/>
+                201, DSC Tower, Dubai Studio City<br/>
+                Dubai, United Arab Emirates
               </li>
             </ul>
           </div>

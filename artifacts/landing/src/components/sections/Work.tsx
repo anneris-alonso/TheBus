@@ -1,31 +1,17 @@
-import { motion, useScroll, useMotionValue } from "framer-motion";
+import { motion, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 /**
- * LAYOUT DESIGN
+ * PREMIUM INTERCEPTED SCROLL PATTERN
  * ─────────────────────────────────────────────────────────────
- * START state  (x = 0):
- *   [PL] [Card 1] [gap] [Card 2] [gap] [Card 3 partial] ...off screen
- *
- * END state  (x = -scrollDist):
- *   [PL] [Card 3] [gap] [Card 4] [PR]
- *
- * scrollDist = 2 × (CARD_W + GAP)  — two card positions
- *
- * Right padding (PR) must fill the viewport after card 4:
- *   PR = viewport − (PL + CARD + GAP + CARD)
- *      = vw×(1−PL_VW−2×CARD_VW) − GAP_PX
- *      = calc(15vw − 40px)
+ * 1. SECTION: height = 100vh (NO fake height).
+ * 2. WRAPPER: .sticky top-0 h-screen (preserves static titles).
+ * 3. INTERCEPTION: Attach 'wheel' and 'touch' listeners when active.
+ * 4. HIJACKING: While animating X, call e.preventDefault() to "stick"
+ *    the user in place. Release when X reaches 0 or MAX.
+ * 5. MOTION: useSpring for inertia and high-end feel.
  * ─────────────────────────────────────────────────────────────
  */
-const CARD_VW = 0.40;   // w-[40vw]
-const GAP_PX  = 40;     // gap-[40px]
-const PL_VW   = 0.05;   // pl-[5vw]
-
-// scrollDist for any viewport width
-function getScrollDist(vw: number): number {
-  return Math.round(2 * (CARD_VW * vw + GAP_PX));
-}
 
 const projects = [
   { id: 1, title: "The Mobile Studio", category: "Production Unit", image: "/gallery/1.webp" },
@@ -35,66 +21,141 @@ const projects = [
 ];
 
 export default function Work() {
-  const sectionRef    = useRef<HTMLDivElement>(null);
-  const sectionTopRef = useRef(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef   = useRef<HTMLDivElement>(null);
 
-  const [scrollDist, setScrollDist] = useState(() =>
-    typeof window !== "undefined" ? getScrollDist(window.innerWidth) : 1616
-  );
+  // Raw value for the target position (0 to targetMax)
+  const xTarget = useMotionValue(0);
+  
+  // Spring-smoothed horizontal position for the high-end feel
+  // stiffness: 100, damping: 20 provides a responsive yet organic transition.
+  const x = useSpring(xTarget, {
+    stiffness: 100,
+    damping: 25,
+    mass: 1,
+  });
 
-  const x        = useMotionValue(0);
-  const { scrollY } = useScroll();
+  const [maxTranslate, setMaxTranslate] = useState(0);
 
-  // Measure section's true top in the document after mount
+  // Dynamic max translation calculation:
+  // trackWidth - viewportWidth
+  // We perform this on mount and resize.
   useEffect(() => {
-    const measure = () => {
-      if (sectionRef.current) {
-        sectionTopRef.current =
-          sectionRef.current.getBoundingClientRect().top + window.scrollY;
+    const calc = () => {
+      if (trackRef.current) {
+        const trackWidth = trackRef.current.scrollWidth;
+        const viewWidth  = window.innerWidth;
+        // Total distance we can travel horizontally
+        setMaxTranslate(trackWidth - viewWidth);
       }
     };
-    measure();
-    // Re-measure when other sections above change (resize or font-load)
-    window.addEventListener("resize", measure);
-    // Also re-measure once after a short delay to catch late-rendering above
-    const t = setTimeout(measure, 300);
-    return () => { window.removeEventListener("resize", measure); clearTimeout(t); };
+    calc();
+    window.addEventListener("resize", calc);
+    // Extra calc after short delay to ensure layout is stable
+    const t = setTimeout(calc, 500);
+    return () => { window.removeEventListener("resize", calc); clearTimeout(t); };
   }, []);
 
-  // Recalculate scrollDist on resize
+  // SCROLL INTERCEPTION LOGIC
   useEffect(() => {
-    const onResize = () => setScrollDist(getScrollDist(window.innerWidth));
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+    const el = sectionRef.current;
+    if (!el) return;
 
-  // Drive x directly from raw scrollY — zero ambiguity
-  useEffect(() => {
-    const unsub = scrollY.on("change", (y) => {
-      const top      = sectionTopRef.current;
-      const progress = (y - top) / scrollDist;
-      x.set(-scrollDist * Math.max(0, Math.min(1, progress)));
-    });
-    return unsub;
-  }, [scrollY, scrollDist, x]);
+    let touchStartY = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      const rect = el.getBoundingClientRect();
+      const viewHeight = window.innerHeight;
+      
+      // Much more robust activation: 
+      // If the top is near 0 (within 50px) and we haven't finished the horizontal scroll,
+      // or if we are scrolling up and haven't reached the start.
+      const isVisible = rect.top < viewHeight && rect.bottom > 0;
+      if (!isVisible) return;
+
+      const currentX = -xTarget.get();
+      const delta    = e.deltaY;
+
+      // Check if we are "locked" in the viewport
+      // A tolerance of 50px helps catch fast scrolls
+      const isAtTop = Math.abs(rect.top) < 50;
+
+      // LOCK LOGIC:
+      // 1. If scrolling DOWN and we have cards to show
+      if (delta > 0 && currentX < maxTranslate && isAtTop) {
+        e.preventDefault();
+        // Force the section to the top to avoid "drifting"
+        if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
+        
+        const nextX = Math.min(currentX + delta, maxTranslate);
+        xTarget.set(-nextX);
+      }
+      // 2. If scrolling UP and we are not at the first card
+      else if (delta < 0 && currentX > 0 && isAtTop) {
+        e.preventDefault();
+        if (rect.top !== 0) window.scrollTo({ top: el.offsetTop });
+
+        const nextX = Math.max(currentX + delta, 0);
+        xTarget.set(-nextX);
+      }
+      // Otherwise, the scroll event is allowed to propagate, moving the page vertically
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const rect = el.getBoundingClientRect();
+      const isActive = rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+      
+      if (!isActive) return;
+
+      const currentY = e.touches[0].clientY;
+      const deltaY   = touchStartY - currentY;
+      
+      const currentX = -xTarget.get();
+
+      // Mobile delta multiplier (swipes feel faster/different than wheels)
+      const multiplier = 1.5;
+      const touchDelta = deltaY * multiplier;
+
+      if (touchDelta > 0 && currentX < maxTranslate) {
+        // Only prevent if we actually move horizontally
+        e.preventDefault();
+        const nextX = Math.min(currentX + touchDelta, maxTranslate);
+        xTarget.set(-nextX);
+      } else if (touchDelta < 0 && currentX > 0) {
+        e.preventDefault();
+        const nextX = Math.max(currentX + touchDelta, 0);
+        xTarget.set(-nextX);
+      }
+      
+      touchStartY = currentY; // Update for continuous movement
+    };
+
+    // Passive: false is CRITICAL to allow preventDefault()
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [maxTranslate, xTarget]);
 
   return (
-    /**
-     * Section height = 100vh + scrollDist
-     * When the user scrolls scrollDist px from sectionTop:
-     *   – x reaches −scrollDist  →  Card 3 & 4 fully visible
-     *   – section bottom hits viewport bottom  →  next section enters
-     * Zero black gap.
-     */
     <section
       ref={sectionRef}
       id="work"
-      className="relative bg-[#0a0a0a]"
-      style={{ height: `calc(100vh + ${scrollDist}px)` }}
+      className="relative bg-[#0a0a0a] h-screen"
     >
+      {/* Sticky wrapper — preserves titles and progress while images move */}
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
 
-        {/* Title — absolutely positioned, DOES NOT move with x */}
+        {/* Static Title - Mixed Serif/Sans Brutalist Style */}
         <div className="absolute top-20 left-8 md:left-16 z-10 pointer-events-none mix-blend-difference">
           <h2 className="text-3xl md:text-6xl font-serif font-bold uppercase tracking-tighter text-white">
             THE BUS
@@ -105,26 +166,38 @@ export default function Work() {
           </h2>
         </div>
 
-        {/*
-          Track — only THIS moves horizontally.
-          pl = 5vw   (matches PL_VW = 0.05 in the formula)
-          pr = calc(15vw − 40px)  (fills viewport exactly at end state)
-          gap = 40px  (matches GAP_PX = 40 in the formula)
+        {/* Progress Hint */}
+        <motion.div
+           className="absolute bottom-10 right-8 md:right-16 z-10 pointer-events-none"
+           style={{
+             opacity: useTransform(xTarget, [0, -maxTranslate / 4, -maxTranslate], [0, 1, 0.4]),
+           }}
+        >
+          <span className="text-white/40 font-mono text-xs tracking-widest uppercase">
+            SCROLL TO EXPLORE
+          </span>
+        </motion.div>
+
+        {/* 
+          HORIZONTAL TRACK
+          padding-left: 5vw to align with text.
+          padding-right: 5vw to ensure 4th card has breathing room at end.
         */}
         <motion.div
+          ref={trackRef}
           style={{ x }}
-          className="flex gap-[40px] pl-[5vw] pr-[calc(15vw-40px)]"
+          className="flex gap-[40px] pl-[5vw] pr-[5vw] will-change-transform items-center"
         >
           {projects.map((project, index) => (
             <div
               key={project.id}
-              className="group relative flex-none w-[40vw] h-[65vh] flex flex-col justify-end"
+              className="group relative flex-none w-[75vw] h-[65vh] flex flex-col justify-end"
             >
               <div className="absolute inset-0 overflow-hidden bg-white/5 grayscale group-hover:grayscale-0 transition-all duration-700 border border-white/10">
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-105"
+                  className="object-cover w-full h-full transform transition-transform duration-1000 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
               </div>
