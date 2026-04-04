@@ -7,6 +7,7 @@ import About from "@/components/sections/About";
 import SplineCarousel from "@/components/sections/SplineCarousel";
 import Work from "@/components/sections/Work";
 import Services from "@/components/sections/Services";
+import Team from "@/components/sections/Team";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import CustomCursor from "@/components/sections/CustomCursor";
@@ -41,6 +42,7 @@ export default function Landing() {
         <About />
         <Work />
         <Services />
+        <Team />
         <Contact />
       </main>
       <Footer />
