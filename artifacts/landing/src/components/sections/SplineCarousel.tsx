@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const TICKER_ITEMS = [
   "ON WHEELS",
@@ -16,7 +18,33 @@ const TICKER_ITEMS = [
 const TICKER_H = 56; // px — coincide con h-14
 
 export default function SplineCarousel() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slides = ["/carousel/slide1.png", "/carousel/slide2.png", "/carousel/slide3.png"];
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    let interval: NodeJS.Timeout | undefined;
+    if (!isOnline) {
+      interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 4000);
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      if (interval) clearInterval(interval);
+    };
+  }, [isOnline]);
+
   const items = [...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS];
+
 
   return (
     <section
@@ -37,14 +65,30 @@ export default function SplineCarousel() {
             className="absolute left-0 right-0"
             style={{ top: "-18%", height: "calc(118% + 60px)" }}
           >
-            <iframe
-              src="https://my.spline.design/herocopy-Z9SSpCtmegFgXqAI2bBOD5Mg-jZD/"
-              frameBorder="0"
-              width="100%"
-              height="100%"
-              className="w-full h-full border-none pointer-events-auto"
-              title="Spline 3D Carousel"
-            />
+            {isOnline ? (
+              <iframe
+                src="https://my.spline.design/herocopy-Z9SSpCtmegFgXqAI2bBOD5Mg-jZD/"
+                frameBorder="0"
+                width="100%"
+                height="100%"
+                className="w-full h-full border-none pointer-events-auto"
+                title="Spline 3D Carousel"
+              />
+            ) : (
+              <div className="relative w-full h-full">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentSlide}
+                    src={slides[currentSlide]}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+              </div>
+            )}
           </div>
           <div
             className="absolute bottom-0 left-0 right-0 pointer-events-none"
@@ -55,6 +99,7 @@ export default function SplineCarousel() {
             }}
           />
         </div>
+
 
         {/* RIGHT — Panel turquesa */}
         <motion.div
